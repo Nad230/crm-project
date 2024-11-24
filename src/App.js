@@ -1,23 +1,23 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
-
-
-const Dashboard = () => <div>Dashboard Page</div>;
-const Leads = () => <div>Leads Page</div>;
-const Reports = () => <div>Reports Page</div>;
-const Settings = () => <div>Settings Page</div>;
-const Login = () => <div>Login Page</div>;
-const AddCustomer = () => <div>Add Customer Page</div>;
-const CustomerDetails = () => <div>Customer Details Page</div>;
-const Customer = () => <div>Customer Page</div>;
+import Dashboard from "./pages/Dashboard";
+import Leads from "./pages/leads";
+import Reports from "./pages/Reports";
+import Settings from "./pages/Settings";
+import Login from "./pages/Login";
+import AddCustomer from "./pages/AddCustomer";
+import CustomerDetails from "./pages/CustomerDetails";
+import Customer from "./pages/Customers";
+import { Home } from "@mui/icons-material";
 
 const App = () => {
   return (
     <Router>
       <Header />
       <Routes>
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/" element={<Dashboard/>} />
+        <Route path="/dashbord" element={<Dashboard/>} />
         <Route path="/leads" element={<Leads />} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/settings" element={<Settings />} />
