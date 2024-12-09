@@ -1,31 +1,9 @@
 // routes/customerRoutes.js
-router.post("/addCustomer", async (req, res) => {
-  const { name, email, phone, company, Additional_Notes, status } = req.body;
+const express = require('express');
+const router = express.Router(); // Initialize router
+const { addCustomer } = require('../controllers/customerController'); // Import controller function
 
-  // Log the data received from the frontend
-  console.log(req.body); // Check if data is being received correctly
+// POST route to add a customer
+router.post('/addCustomer', addCustomer); // Call the controller function
 
-  const newCustomer = new Customer({
-    name,
-    email,
-    phone,
-    company,
-    Additional_Notes,
-    status,
-  });
-
-  try {
-    await newCustomer.save(); // Save the customer to MongoDB
-    res.status(201).json({ message: "Customer added successfully!" });
-  } catch (error) {
-    console.error("Error adding customer:", error);
-    res.status(500).json({ message: "Error adding customer", error });
-  }
-});
-mongoose.connection.on('connected', () => {
-  console.log('Mongoose connected to MongoDB');
-});
-
-mongoose.connection.on('error', (err) => {
-  console.log('Error connecting to MongoDB:', err);
-});
+module.exports = router; // Export router

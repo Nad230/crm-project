@@ -8,6 +8,7 @@ import {
   IconButton,
 } from "@mui/material";
 import { Person, Email, Phone, Business, Note } from "@mui/icons-material";
+import axios from "axios"; // Import axios
 
 const AddCustomer = () => {
   const [formData, setFormData] = useState({
@@ -19,14 +20,31 @@ const AddCustomer = () => {
     notes: "",
   });
 
+  const [errorMessage, setErrorMessage] = useState(""); // For error handling
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Customer added successfully!");
-    // You can add API integration here.
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/addCustomer", formData);
+      console.log("Customer added successfully:", response.data);
+      alert("Customer added successfully!");
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        address: "",
+        company: "",
+        notes: "",
+      }); // Reset form
+    } catch (error) {
+      console.error("Error adding customer:", error.response ? error.response.data : error.message);
+      setErrorMessage("Error adding customer, please try again."); // Set error message
+    }
   };
 
   const handleReset = () => {
@@ -55,6 +73,7 @@ const AddCustomer = () => {
       <Typography variant="h5" component="h2" gutterBottom>
         Add New Customer
       </Typography>
+      {errorMessage && <Typography color="error">{errorMessage}</Typography>} {/* Show error message */}
       <form onSubmit={handleSubmit}>
         <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
           <IconButton disabled>
