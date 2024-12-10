@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Axios from "axios"
 import {
   Button,
   TextField,
@@ -19,8 +20,10 @@ import {
 } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
 
-// Sample customer data
-const sampleCustomers = [
+
+
+
+/*const sampleCustomers = [
   {
     id: 1,
     name: "John Doe",
@@ -43,10 +46,17 @@ const sampleCustomers = [
     status: "Active",
   },
   // Add more sample customers as needed
-];
+];*/
 
 const Customer = () => {
-  const [customers, setCustomers] = useState(sampleCustomers);
+  const [customers,setCustomers]= useState([])
+
+useEffect(()=>{
+  Axios.get("http://localhost:5000/api/customer")
+  .then(res =>{
+    setCustomers(res.data)
+  })
+},[])
   const [statusFilter, setStatusFilter] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 

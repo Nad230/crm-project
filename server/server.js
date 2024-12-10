@@ -4,7 +4,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const customerRoutes = require('./routes/customerRoutes');
-
+const leadRoutes = require("./routes/leadRoutes")
 const app = express();
 
 // Enable CORS
@@ -20,8 +20,8 @@ mongoose
   .catch((err) => console.error('Could not connect to MongoDB:', err));
 
 // Use Routes
-app.use('/api', customerRoutes);
-
+app.use('/api/customer', customerRoutes);
+app.use('/api/leads', leadRoutes);
 // Start Server
 const PORT = 5000;
-app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`Server is running on ${PORT}`));

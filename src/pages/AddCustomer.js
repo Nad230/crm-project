@@ -30,7 +30,7 @@ const AddCustomer = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:5000/api/addCustomer", formData);
+      const response = await axios.post("http://localhost:5000/api/customer/addCustomer", formData);
       console.log("Customer added successfully:", response.data);
       alert("Customer added successfully!");
       setFormData({

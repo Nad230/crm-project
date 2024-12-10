@@ -7,15 +7,54 @@ const router = express.Router();
 // Create a new lead
 router.post("/", async (req, res) => {
   try {
-    const { name, email, phone, status } = req.body;
-    const newLead = new Lead({ name, email, phone, status });
+    const {
+      fullName,
+      email,
+      phone,
+      source,
+      companyName,
+      status,
+      leadStage,
+      priority,
+      assignedTo,
+      notes,
+      followUpDate,
+      estimatedValue,
+      tags,
+      history,
+      customAttributes
+    } = req.body;
+
+    // Create a new lead with the provided data
+    const newLead = new Lead({
+      fullName,
+      email,
+      phone,
+      source,
+      companyName,
+      status,
+      leadStage,
+      priority,
+      assignedTo,
+      notes,
+      followUpDate,
+      estimatedValue,
+      tags,
+      history,
+      customAttributes
+    });
+
+    // Save the new lead to the database
     await newLead.save();
+
+    // Return the newly created lead as a response
     res.status(201).json(newLead);
   } catch (error) {
+    // Return error message if something goes wrong
     res.status(400).json({ error: error.message });
   }
 });
-
+// Get all leads
 // Get all leads
 router.get("/", async (req, res) => {
   try {
@@ -36,6 +75,7 @@ router.get("/:id", async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
+
 
 // Update a lead
 router.put("/:id", async (req, res) => {

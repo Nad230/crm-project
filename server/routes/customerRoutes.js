@@ -1,9 +1,12 @@
-// routes/customerRoutes.js
 const express = require('express');
-const router = express.Router(); // Initialize router
-const { addCustomer } = require('../controllers/customerController'); // Import controller function
+const router = express.Router();
+const customerController = require('../controllers/customerController');
 
-// POST route to add a customer
-router.post('/addCustomer', addCustomer); // Call the controller function
+// Add routes
+router.post('/addCustomer', customerController.addCustomer);
+router.get('/', customerController.getAllCustomers);
+router.get('/:id', customerController.getCustomerById);
+router.put('/:id', customerController.updateCustomer);
+router.delete('/:id', customerController.deleteCustomer);
 
-module.exports = router; // Export router
+module.exports = router;

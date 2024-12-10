@@ -11,6 +11,7 @@ import {
   ListItem,
   ListItemText,
   Typography,
+  Divider, // Import Divider
 } from "@mui/material";
 import {
   Notifications,
@@ -74,6 +75,16 @@ const Header = () => {
               </NavLink>
             ))}
           </Box>
+
+          {/* Divider */}
+          <Box
+          sx={{
+            height: "40px",
+            width: "2px",
+            backgroundColor: "#6b7280",
+            marginX: 2,
+          }}
+        />
 
           {/* Icons */}
           <IconButton color="inherit">
