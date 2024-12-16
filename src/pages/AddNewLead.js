@@ -1,39 +1,56 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Typography, TextField, Grid, Button, FormControl, Select, MenuItem, InputLabel, Fab } from "@mui/material";
-import { Add, Search } from "@mui/icons-material";
+import { Box, Typography, TextField, Grid, Button } from "@mui/material";
 
 const AddNewLead = () => {
   const navigate = useNavigate();
 
   const [newLead, setNewLead] = useState({
     fullName: "",
-  email: "",
-  phone: "",
-  source: "",
-  status: "New", // Changed to status for consistency with backend schema
-  assignedTo: "Nadhir",
-  priority: "High",
-  followUpDate: "",
-  estimatedValue: "",
-  tags: "",
+    email: "",
+    phone: "",
+    source: "",
+    status: "New",
+    assignedTo: "", // Will hold the name of the representative or a message.
+    priority: "Low",
+    followUpDate: "",
+    estimatedValue: "",
+    Discription: "",
   });
 
-  const [customers, setCustomers] = useState([]);
+  const [team, setTeam] = useState([]);
 
-  // Fetch customer (users for "assignedTo" field) data
   useEffect(() => {
-    const fetchCustomers = async () => {
+    const fetchSalesRepresentative = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/customers"); // Adjust the API endpoint
+        const response = await fetch("http://localhost:5000/api/team/role/Sales Representative");
         const data = await response.json();
-        setCustomers(data); // Assuming the data returned contains users for assignment
+
+        if (response.ok && data.length > 0) {
+          const rep = data[0]; // Assuming you want to assign the first Sales Representative
+          setNewLead((prevState) => ({
+            ...prevState,
+            assignedTo: rep.fullName, // Use fullName from the backend response
+          }));
+          setTeam(data); // Store the list of Sales Representatives if needed later
+        } else {
+          // If no representatives are found, set a custom message
+          setNewLead((prevState) => ({
+            ...prevState,
+            assignedTo: "No representatives available", // Custom message when no representatives are found
+          }));
+        }
       } catch (error) {
-        console.error("Error fetching customers:", error);
+        console.error("Error fetching Sales Representative:", error);
+        // Handle error properly
+        setNewLead((prevState) => ({
+          ...prevState,
+          assignedTo: "Error fetching representative", // Message when there's an error fetching
+        }));
       }
     };
 
-    fetchCustomers();
+    fetchSalesRepresentative();
   }, []);
 
   const handleInputChange = (e) => {
@@ -54,7 +71,7 @@ const AddNewLead = () => {
 
       const data = await response.json();
       if (response.ok) {
-        setCustomers((prevCustomers) => [...prevCustomers, data]); // Update the list of leads/customers
+        setTeam((prevTeam) => [...prevTeam, data]);
         navigate("/leads");
       } else {
         throw new Error(data.error || "There was an error adding the lead.");
@@ -78,8 +95,8 @@ const AddNewLead = () => {
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <TextField
-                label="Full Name" // Changed to Full Name for consistency with backend
-                name="fullName" // Changed to fullName to match backend
+                label="Full Name"
+                name="fullName"
                 value={newLead.fullName}
                 onChange={handleInputChange}
                 fullWidth
@@ -124,57 +141,40 @@ const AddNewLead = () => {
                 sx={{ backgroundColor: "#ffffff", borderRadius: 2 }}
               />
             </Grid>
+
             <Grid item xs={12} sm={6}>
-              <FormControl fullWidth variant="outlined" sx={{ backgroundColor: "#ffffff", borderRadius: 2 }}>
-                <InputLabel>Lead Stage</InputLabel>
-                <Select
-                  label="Lead Stage"
-                  name="leadStage" // changed to leadStage for backend validation
-                  value={newLead.leadStage}
-                  onChange={handleInputChange}
-                  required
-                >
-                  <MenuItem value="New">New</MenuItem>
-                  <MenuItem value="Contacted">Contacted</MenuItem>
-                  <MenuItem value="Qualified">Qualified</MenuItem>
-                  <MenuItem value="Closed">Closed</MenuItem>
-                </Select>
-              </FormControl>
+              <TextField
+                label="Priority"
+                value="Low"
+                fullWidth
+                variant="outlined"
+                disabled
+                sx={{ backgroundColor: "#ffffff", borderRadius: 2 }}
+              />
             </Grid>
+
             <Grid item xs={12} sm={6}>
-              <FormControl fullWidth variant="outlined" sx={{ backgroundColor: "#ffffff", borderRadius: 2 }}>
-                <InputLabel>Assigned To</InputLabel>
-                <Select
-                  label="Assigned To"
-                  name="assignedTo"
-                  value={newLead.assignedTo}
-                  onChange={handleInputChange}
-                  required
-                >
-                  {customers.map((customer) => (
-                    <MenuItem key={customer.id} value={customer.name}>
-                      {customer.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <TextField
+                label="Lead Stage"
+                value="New"
+                fullWidth
+                variant="outlined"
+                disabled
+                sx={{ backgroundColor: "#ffffff", borderRadius: 2 }}
+              />
             </Grid>
+
             <Grid item xs={12} sm={6}>
-              <FormControl fullWidth variant="outlined" sx={{ backgroundColor: "#ffffff", borderRadius: 2 }}>
-                <InputLabel>Priority</InputLabel>
-                <Select
-                  label="Priority"
-                  name="priority"
-                  value={newLead.priority}
-                  onChange={handleInputChange}
-                  required
-                >
-                  <MenuItem value="High">High</MenuItem>
-                  <MenuItem value="Medium">Medium</MenuItem>
-                  <MenuItem value="Low">Low</MenuItem>
-                </Select>
-              </FormControl>
+              <TextField
+                label="Assigned To"
+                value={newLead.assignedTo || "Awaiting Assignment"} // Change default message to something more suitable
+                fullWidth
+                variant="outlined"
+                disabled
+                sx={{ backgroundColor: "#ffffff", borderRadius: 2 }}
+              />
             </Grid>
+
             <Grid item xs={12} sm={6}>
               <TextField
                 label="Follow-up Date"
@@ -205,8 +205,8 @@ const AddNewLead = () => {
             </Grid>
             <Grid item xs={12}>
               <TextField
-                label="Tags"
-                name="tags"
+                label="Discription"
+                name="discription"
                 value={newLead.tags}
                 onChange={handleInputChange}
                 fullWidth
@@ -222,21 +222,6 @@ const AddNewLead = () => {
           </Grid>
         </form>
       </Box>
-
-      <Fab
-        color="secondary"
-        onClick={() => navigate("/leads")}
-        sx={{
-          position: "fixed",
-          bottom: 20,
-          left: 20,
-          background: "#3b82f6",
-          color: "#ffffff",
-          "&:hover": { background: "#1e3a8a" },
-        }}
-      >
-        <Search />
-      </Fab>
     </Box>
   );
 };

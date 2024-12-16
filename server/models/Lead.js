@@ -6,14 +6,14 @@ const leadSchema = new mongoose.Schema({
   phone: { type: String, default: '' },
   source: { type: String, required: true },
   companyName: { type: String, default: '' },
-  status: { type: String, enum: ['New', 'Contacted', 'Qualified', 'Closed', 'Inactive'], },
-  leadStage: { type: String, enum: ['Initial Contact', 'Follow-up', 'Negotiation'], default: '' },
-  priority: { type: String, enum: ['High', 'Medium', 'Low'],  },
-  assignedTo: { type: String,  },
+  photo: { type: String, default: '' }, // Added photo field
+  status: { type: String, enum: ['New', 'Contacted', 'Qualified', 'Negotiation', 'Closed',"rejected"], default: 'New' },
+  leadStage: { type: String, enum: ['Initial Contact', 'Follow-up', 'Negotiation'], default: 'Initial Contact' },
+  priority: { type: String, enum: ['High', 'Medium', 'Low'], default: 'Low' },
+  assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'TeamMember', required: true },
   notes: { type: String, default: '' },
-  followUpDate: { type: Date, default: null },
   estimatedValue: { type: Number, default: null },
-  tags: { type: [String], default: [] },
+  description: { type: [String], default: [] }, // Corrected spelling
   history: { type: [String], default: [] },
   customAttributes: { type: Map, of: String, default: {} }
 });

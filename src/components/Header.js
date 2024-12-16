@@ -55,7 +55,7 @@ const Header = () => {
 
           {/* Navigation Links */}
           <Box sx={{ display: "flex", gap: 2 }}>
-            {["Home", "Dashboard", "Settings"].map((label, index) => (
+            {["Home", "Dashboard", "Activity"].map((label, index) => (
               <NavLink
                 key={index}
                 to={`/${label.toLowerCase().replace(" ", "-")}`}
@@ -134,7 +134,7 @@ const Header = () => {
           </Box>
 
           <List>
-            {["Leads", "Reports", "Customer", "Add Customer", "Customer Details"].map((label, index) => (
+            {["Leads", "Reports", "Customer", "Add Customer","TeamMember"].map((label, index) => (
               <ListItem button key={index}>
                 <NavLink
                   to={`/${label.toLowerCase().replace(" ", "-")}`}

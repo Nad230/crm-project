@@ -47,6 +47,8 @@ exports.updateCustomer = async (req, res) => {
   }
 };
 
+
+
 // Delete customer
 exports.deleteCustomer = async (req, res) => {
   try {

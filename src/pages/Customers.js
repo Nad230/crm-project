@@ -19,6 +19,7 @@ import {
   InputLabel,
 } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 
 
@@ -59,6 +60,7 @@ useEffect(()=>{
 },[])
   const [statusFilter, setStatusFilter] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate(); // Initialize navigate
 
   // Handle Search
   const handleSearch = (e) => {
@@ -74,6 +76,16 @@ useEffect(()=>{
   const clearFilters = () => {
     setSearchQuery("");
     setStatusFilter("");
+  };
+  const handleDeleteCustomer = async (id) => {
+    try {
+      await fetch(`http://localhost:5000/api/customer/${id}`, {
+        method: "DELETE",
+      });
+      setCustomers(customers.filter((customer) => customer._id !== id));
+    } catch (error) {
+      console.error("Error deleting customer:", error);
+    }
   };
 
   // Filtered customers
@@ -144,12 +156,13 @@ useEffect(()=>{
                 <TableCell>{customer.phone}</TableCell>
                 <TableCell>{customer.status}</TableCell>
                 <TableCell>
-                  <Button
+                <Button
                     variant="outlined"
                     color="primary"
                     size="small"
                     sx={{ marginRight: 1 }}
                     startIcon={<Edit />}
+                    onClick={() => navigate(`/updateCustomer/${customer._id}`)} // Navigate to UpdateCustomer
                   >
                     Edit
                   </Button>
@@ -158,6 +171,7 @@ useEffect(()=>{
                     color="secondary"
                     size="small"
                     startIcon={<Delete />}
+                    onClick={() => handleDeleteCustomer(customer._id)}
                   >
                     Delete
                   </Button>

@@ -13,24 +13,56 @@ import {
   Chip,
   Fab,
 } from "@mui/material";
-import { Search, Edit, Delete, Add, AccountCircle } from "@mui/icons-material";
+import { Search, Info, Delete, Add, AccountCircle } from "@mui/icons-material";
 
 const LeadsPage = () => {
   const navigate = useNavigate();
   const [leads, setLeads] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-
-  // Fetch leads from the backend
+  const handleDeleteLeads = async (id) => {
+    try {
+      await fetch(`http://localhost:5000/api/leads/${id}`, {
+        method: "DELETE",
+      });
+      setLeads(leads.filter((lead) => lead._id !== id));
+    } catch (error) {
+      console.error("Error deleting customer:", error);
+    }
+  };
+  // Fetch leads and team member names
   useEffect(() => {
     const fetchLeads = async () => {
       try {
+        // Fetch all leads
         const response = await fetch("http://localhost:5000/api/leads");
         const data = await response.json();
-        setLeads(data);
+
+        // Map through leads and fetch assigned team member details
+        const updatedLeads = await Promise.all(
+          data.map(async (lead) => {
+            if (lead.assignedTo) {
+              try {
+                const teamMemberResponse = await fetch(
+                  `http://localhost:5000/api/team/get-team-member/${lead.assignedTo}`
+                );
+                const teamMember = await teamMemberResponse.json();
+                return { ...lead, assignedToName: teamMember.fullName };
+              } catch (error) {
+                console.error("Error fetching team member:", error);
+                return { ...lead, assignedToName: "Error fetching member" };
+              }
+            } else {
+              return { ...lead, assignedToName: "Not Assigned" };
+            }
+          })
+        );
+
+        setLeads(updatedLeads);
       } catch (error) {
         console.error("Error fetching leads:", error);
       }
     };
+
     fetchLeads();
   }, []);
 
@@ -49,7 +81,14 @@ const LeadsPage = () => {
   });
 
   return (
-    <Box sx={{ height: "100vh", display: "flex", flexDirection: "column", backgroundColor: "#f0f4f8" }}>
+    <Box
+      sx={{
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        backgroundColor: "#f0f4f8",
+      }}
+    >
       {/* Header Section */}
       <Box
         sx={{
@@ -59,7 +98,13 @@ const LeadsPage = () => {
           alignItems: "center",
         }}
       >
-        <Typography variant="h4" sx={{ color: "linear-gradient(90deg, #1e3a8a, #3b82f6)", fontWeight: "bold" }}>
+        <Typography
+          variant="h4"
+          sx={{
+            color: "linear-gradient(90deg, #1e3a8a, #3b82f6)",
+            fontWeight: "bold",
+          }}
+        >
           Leads
         </Typography>
         <TextField
@@ -114,18 +159,27 @@ const LeadsPage = () => {
                   <Typography variant="body2" color="text.secondary" sx={{ marginBottom: 1 }}>
                     Source: {lead.source}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ marginBottom: 1 }}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      marginBottom: 1,
+                      color:
+                        lead.priority === "High"
+                          ? "#ef4444"
+                          : lead.priority === "Medium"
+                          ? "#f59e0b"
+                          : "#10b981",
+                      fontWeight: "bold",
+                    }}
+                  >
                     Priority: {lead.priority}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ marginBottom: 1 }}>
-                    Follow-up Date: {lead.followUpDate}
+
+                  {/* Display the name of the assigned person */}
+                  <Typography variant="body2" color="text.secondary">
+                    Assigned To: {lead.assignedToName}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ marginBottom: 1 }}>
-                    Estimated Value: {lead.estimatedValue}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ marginBottom: 1 }}>
-                    Tags: {lead.tags}
-                  </Typography>
+
                   <Chip
                     label={lead.status}
                     sx={{
@@ -135,12 +189,20 @@ const LeadsPage = () => {
                     }}
                   />
                   <Box sx={{ display: "flex", justifyContent: "flex-end", marginTop: 2 }}>
-                    <IconButton sx={{ color: "#38bdf8" }}>
-                      <Edit />
+                    <IconButton
+                      sx={{ color: "#3b82f6" }}
+                      onClick={() => navigate(`/lead/${lead._id}`)}
+                    >
+                      <Info />
                     </IconButton>
-                    <IconButton sx={{ color: "#ef4444" }}>
-                      <Delete />
-                    </IconButton>
+                    <Button
+                    
+                    color="secondary"
+                    size="small"
+                    startIcon={<Delete />}
+                    onClick={() => handleDeleteLeads(lead._id)}
+                  >
+                  </Button>
                   </Box>
                 </CardContent>
               </Card>
@@ -165,8 +227,6 @@ const LeadsPage = () => {
         <Add />
       </Fab>
     </Box>
-     
-   
   );
 };
 
