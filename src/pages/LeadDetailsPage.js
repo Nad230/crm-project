@@ -124,12 +124,12 @@ const LeadDetailsPage = () => {
         </IconButton>
 
         <CardMedia
-          component="img"
-          height="200"
-          image="https://via.placeholder.com/600x200?text=Lead+Details"
-          alt="Lead Details"
-          sx={{ borderRadius: 2, marginBottom: 3 }}
-        />
+  component="img"
+  height="200"
+  image={`http://localhost:5000/uploads/${lead.photo.split("/").pop()}`} // Ensures only the filename is used
+  alt="Lead Photo"
+  sx={{ borderRadius: 2, marginBottom: 3 }}
+/>
 
         <Typography
           variant="h4"
@@ -198,8 +198,8 @@ const LeadDetailsPage = () => {
 
             {/* Display Notes */}
             <Typography variant="body1" sx={{ marginBottom: 1 }}>
-              <strong>Notes:</strong> {lead.notes && lead.notes.length > 0 ? lead.notes.join(", ") : "No notes available."}
-            </Typography>
+  <strong>Notes:</strong> {Array.isArray(lead.notes) && lead.notes.length > 0 ? lead.notes.join(", ") : "No notes available."}
+</Typography>
 
             <Typography variant="body1" sx={{ marginBottom: 1 }}>
               <strong>Custom Attributes:</strong> {Object.keys(lead.customAttributes || {}).length > 0 ? Object.entries(lead.customAttributes).map(([key, value]) => `${key}: ${value}`).join(", ") : "No custom attributes."}

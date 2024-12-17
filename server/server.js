@@ -9,7 +9,12 @@ const teamRoutes = require('./routes/team')
 const Reports = require('./routes/reports')
 const activityRoutes = require('./routes/Activity');
 const dashboardRoute = require('./routes/dashboard');
+const adminAuthRoutes = require('./routes/adminAuth');
+require('dotenv').config();
+
 const app = express();
+const path = require('path');
+
 
 // Enable CORS
 app.use(cors());
@@ -31,6 +36,10 @@ app.use('/api/customer', customerRoutes);
 app.use('/api/leads', leadRoutes);
 app.use('api/reportes',Reports)
 app.use('/api',activityRoutes);
+app.use('/uploads', express.static('uploads'));
+app.use('/api/admin', adminAuthRoutes);
+
+
 app.use('/api/team', teamRoutes);
 app.get('/api/dashboard', async (req, res) => {
   try {

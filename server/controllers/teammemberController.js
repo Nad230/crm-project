@@ -2,6 +2,7 @@ const TeamMember = require('../models/teamMember');
 const Lead = require('../models/Lead'); 
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcryptjs');
 
 
 
@@ -58,11 +59,30 @@ const getTeamMemberById = async (req, res) => {
 // Add a new team member
 const addTeamMember = async (req, res) => {
   try {
-    const { fullName, email, role, phone } = req.body;
-    const newMember = new TeamMember({ fullName, email, role, phone });
+    const { fullName, email, role, phone, password } = req.body;
+
+    // Hash the password before saving it to the database
+    const hashedPassword = await bcrypt.hash(password, 10); // Salt rounds: 10 is commonly used
+
+    // Create a new TeamMember document
+    const newMember = new TeamMember({
+      fullName,
+      email,
+      role,
+      phone,
+      password: hashedPassword, // Save the hashed password
+    });
+
+    // Save the new member to the database
     await newMember.save();
-    res.status(201).json(newMember);
+
+    // Return the created team member (excluding password)
+    const memberResponse = { ...newMember._doc };
+    delete memberResponse.password; // Remove password field before sending response
+
+    res.status(201).json(memberResponse); // Respond with the created member (without password)
   } catch (err) {
+    console.error('Error adding team member:', err);
     res.status(500).json({ error: err.message });
   }
 };

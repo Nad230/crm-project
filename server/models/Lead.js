@@ -14,7 +14,7 @@ const leadSchema = new mongoose.Schema({
   notes: { type: String, default: '' },
   estimatedValue: { type: Number, default: null },
   description: { type: [String], default: [] }, // Corrected spelling
-  history: { type: [String], default: [] },
+  history: { type: mongoose.Schema.Types.ObjectId, ref: 'Activity'},
   customAttributes: { type: Map, of: String, default: {} }
 });
 

@@ -47,7 +47,7 @@ const AddActivityForm = () => {
 
     const fetchLeads = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/customer");
+        const response = await axios.get("http://localhost:5000/api/leads");
         setLeads(response.data);
       } catch (error) {
         console.error("Error fetching leads:", error);
@@ -78,7 +78,7 @@ const AddActivityForm = () => {
 
       // Navigate to activities page after a delay
       setTimeout(() => {
-        navigate("/activities"); // Replace "/activities" with the correct route for the activities page
+        navigate("/activity"); // Replace "/activities" with the correct route for the activities page
       }, 2000);
     } catch (error) {
       console.error("Error adding activity:", error);
@@ -148,7 +148,7 @@ const AddActivityForm = () => {
             >
               {leads.map((lead) => (
                 <MenuItem key={lead._id} value={lead._id}>
-                  {lead.name}
+                  {lead.fullName}
                 </MenuItem>
               ))}
             </Select>

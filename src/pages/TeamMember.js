@@ -194,7 +194,7 @@ const TeamPage = () => {
       {/* Floating Add Button */}
       <Fab
         color="primary"
-        onClick={() => navigate("/add-lead")}
+        onClick={() => navigate("/teammanagement")}
         sx={{
           position: "fixed",
           bottom: 20,

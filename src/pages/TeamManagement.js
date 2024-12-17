@@ -9,6 +9,7 @@ const AddTeamMember = () => {
     email: '',
     phone: '',
     role: '',
+    password: '', // Add the password field
   });
 
   const [errorMessage, setErrorMessage] = useState('');
@@ -36,6 +37,7 @@ const AddTeamMember = () => {
         email: '',
         phone: '',
         role: '',
+        password: '', // Reset password field
       });
     } catch (error) {
       console.error('Error adding team member:', error.response ? error.response.data : error.message);
@@ -50,6 +52,7 @@ const AddTeamMember = () => {
       email: '',
       phone: '',
       role: '',
+      password: '', // Reset password field
     });
     setErrorMessage('');
     setSuccessMessage('');
@@ -139,6 +142,22 @@ const AddTeamMember = () => {
               <MenuItem value="Sales Representative">Sales Representative</MenuItem>
             </Select>
           </FormControl>
+        </Box>
+
+        {/* Password Field */}
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+          <IconButton disabled>
+            <Phone />
+          </IconButton>
+          <TextField
+            label="Password"
+            name="password"
+            type="password"
+            value={formData.password}
+            onChange={handleChange}
+            fullWidth
+            required
+          />
         </Box>
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>

@@ -1,29 +1,81 @@
 const Lead = require("../models/Lead");
 const TeamMember = require("../models/teamMember");
+const multer = require('multer');
+const path = require('path');
+const express = require('express');
+const router = express.Router();
+
+
+
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Folder to store uploaded files
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
+
+const upload = multer({ storage });
+
+// Endpoint to handle file upload
+// File Upload Route FIRST
+const postphoto= async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    // Return the file path
+    res.status(200).json({ filePath: `/uploads/${req.file.filename}` });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// THEN Dynamic Routes
+
 
 // Create a new lead
 const createLead = async (req, res) => {
-  const { fullName, email, phone, source, description } = req.body;
+  const { fullName, email, phone, source, description, photo } = req.body;
 
   try {
+    // Find the Sales Representative
     const salesRep = await TeamMember.findOne({ role: "Sales Representative" });
 
+    // Create the new lead
     const newLead = new Lead({
       fullName,
       email,
       phone,
       source,
+      photo, // Include the photo field
       status: "New",
       assignedTo: salesRep._id, // Automatically assign to Sales Representative
       notes: description,
     });
 
+    // Save the new lead
     await newLead.save();
+
+    // Add the lead's ID to the Sales Representative's 'assignedLeads' array
+    salesRep.assignedLeads.push(newLead._id);
+
+    // Save the updated Sales Representative
+    await salesRep.save();
+
+    // Respond with the newly created lead
     res.status(201).json(newLead);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
+
+
+
 // Get the most recent leads
 const getRecentLeads = async (req, res) => {
     try {
@@ -109,5 +161,5 @@ module.exports = {
   getLeads,
   getLeadById,
   deleteLead,
-  getRecentLeads
+  getRecentLeads,postphoto,storage
 };

@@ -19,25 +19,37 @@ const LeadsPage = () => {
   const navigate = useNavigate();
   const [leads, setLeads] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [user, setUser] = useState(null);  // Store user data
+
+  // Handle deletion of leads
   const handleDeleteLeads = async (id) => {
     try {
+      const token = localStorage.getItem("authToken"); // Get the token from localStorage or from state
       await fetch(`http://localhost:5000/api/leads/${id}`, {
         method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`, // Send token in the header
+        },
       });
-      setLeads(leads.filter((lead) => lead._id !== id));
+      setLeads(leads.filter((lead) => lead._id !== id));  // Remove the deleted lead from the UI
     } catch (error) {
-      console.error("Error deleting customer:", error);
+      console.error("Error deleting lead:", error);
     }
   };
+
   // Fetch leads and team member names
   useEffect(() => {
     const fetchLeads = async () => {
       try {
-        // Fetch all leads
-        const response = await fetch("http://localhost:5000/api/leads");
+        const token = localStorage.getItem("authToken"); // Get the token from localStorage or from state
+        const response = await fetch("http://localhost:5000/api/leads", {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`, // Send token in the header
+          },
+        });
         const data = await response.json();
-
-        // Map through leads and fetch assigned team member details
+  
         const updatedLeads = await Promise.all(
           data.map(async (lead) => {
             if (lead.assignedTo) {
@@ -56,18 +68,20 @@ const LeadsPage = () => {
             }
           })
         );
-
+  
         setLeads(updatedLeads);
       } catch (error) {
         console.error("Error fetching leads:", error);
       }
     };
-
+  
     fetchLeads();
-  }, []);
+  }, []); // Re-fetch when user data is available
 
+  // Handle search functionality
   const handleSearch = (e) => setSearchQuery(e.target.value);
 
+  // Filter leads based on search query
   const filteredLeads = leads.filter((lead) => {
     const fullName = lead.fullName ? lead.fullName.toLowerCase() : "";
     const email = lead.email ? lead.email.toLowerCase() : "";
@@ -196,13 +210,12 @@ const LeadsPage = () => {
                       <Info />
                     </IconButton>
                     <Button
-                    
-                    color="secondary"
-                    size="small"
-                    startIcon={<Delete />}
-                    onClick={() => handleDeleteLeads(lead._id)}
-                  >
-                  </Button>
+                      color="secondary"
+                      size="small"
+                      startIcon={<Delete />}
+                      onClick={() => handleDeleteLeads(lead._id)}
+                    >
+                    </Button>
                   </Box>
                 </CardContent>
               </Card>

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import profileImage from "../images/projectcrm.jpg";
+import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
+import { useAuth } from "../context/AuthContext"; // Import the AuthContext
 
 import {
   AppBar,
@@ -11,7 +13,9 @@ import {
   ListItem,
   ListItemText,
   Typography,
-  Divider, // Import Divider
+  Divider,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import {
   Notifications,
@@ -23,9 +27,27 @@ import { NavLink } from "react-router-dom";
 
 const Header = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null); // For managing the profile menu
+  const { logout } = useAuth(); // Access logout from AuthContext
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
+  };
+
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget); // Open the profile menu
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null); // Close the profile menu
+  };
+
+  const handleLogout = () => {
+    logout(); // Call logout function from AuthContext
+    localStorage.removeItem("token"); // Remove token from localStorage
+    navigate("/login"); // Redirect to the login page
+    setAnchorEl(null); // Close the menu after logout
   };
 
   return (
@@ -45,11 +67,7 @@ const Header = () => {
           </IconButton>
 
           {/* Title */}
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ flexGrow: 1, color: "#ffffff" }}
-          >
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: "#ffffff" }}>
             MyCRM
           </Typography>
 
@@ -77,14 +95,7 @@ const Header = () => {
           </Box>
 
           {/* Divider */}
-          <Box
-          sx={{
-            height: "40px",
-            width: "2px",
-            backgroundColor: "#6b7280",
-            marginX: 2,
-          }}
-        />
+          <Box sx={{ height: "40px", width: "2px", backgroundColor: "#6b7280", marginX: 2 }} />
 
           {/* Icons */}
           <IconButton color="inherit">
@@ -93,9 +104,20 @@ const Header = () => {
           <IconButton color="inherit">
             <Brightness4 />
           </IconButton>
-          <IconButton color="inherit">
+
+          {/* Profile Icon */}
+          <IconButton color="inherit" onClick={handleMenuClick}>
             <AccountCircle />
           </IconButton>
+
+          {/* Profile Menu */}
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+          >
+            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
 
@@ -112,29 +134,14 @@ const Header = () => {
           },
         }}
       >
-        <Box
-          sx={{
-            width: 250,
-            backgroundColor: "#1e293b",
-            height: "100%",
-            color: "#ffffff",
-          }}
-        >
+        <Box sx={{ width: 250, backgroundColor: "#1e293b", height: "100%", color: "#ffffff" }}>
           {/* Reserved Space for Photo */}
-          <Box
-            sx={{
-              height: 150, // Adjust the height as needed
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "#334155", // Optional: Add background color
-            }}
-          >
+          <Box sx={{ height: 150, display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "#334155" }}>
             <img src={profileImage} alt="Profile" style={{ height: "80px", borderRadius: "50%" }} />
           </Box>
 
           <List>
-            {["Leads", "Reports", "Customer", "Add Customer","TeamMember"].map((label, index) => (
+            {["add-activity", "Leads", "Reports", "Customer", "Add Customer", "TeamMember"].map((label, index) => (
               <ListItem button key={index}>
                 <NavLink
                   to={`/${label.toLowerCase().replace(" ", "-")}`}

@@ -151,8 +151,8 @@ const ReportsPage = () => {
           {activities.length > 0 ? (
             activities.map((activity) => (
               <Typography key={activity._id} variant="body1" color="text.secondary">
-                - {activity.activityType}  calling {leads[activity.leadId]} on {new Date(activity.date).toLocaleDateString()}
-              </Typography>
+                  {`${new Date(activity.date).toLocaleTimeString()} - ${activity.description}`}
+                  </Typography>
             ))
           ) : (
             <Typography variant="body1" color="text.secondary">

@@ -11,13 +11,15 @@ const AddNewLead = () => {
     phone: "",
     source: "",
     status: "New",
-    assignedTo: "", // Will hold the name of the representative or a message.
+    assignedTo: "",
     priority: "Low",
     followUpDate: "",
     estimatedValue: "",
-    Discription: "",
+    description: "",
+    photo: "", // Add photo field
   });
-
+  
+  const [selectedFile, setSelectedFile] = useState(null);
   const [team, setTeam] = useState([]);
 
   useEffect(() => {
@@ -56,6 +58,40 @@ const AddNewLead = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewLead({ ...newLead, [name]: value });
+  };
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
+
+  const handleFileUpload = async () => {
+    if (!selectedFile) {
+      alert("Please select a file first.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("photo", selectedFile);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/leads/upload-photo", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setNewLead((prevState) => ({
+          ...prevState,
+          photo: data.filePath,
+        }));
+        alert("Photo uploaded successfully!");
+      } else {
+        throw new Error(data.message || "Failed to upload photo.");
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      alert(error.message);
+    }
   };
 
   const handleAddLead = async (e) => {
@@ -213,6 +249,12 @@ const AddNewLead = () => {
                 variant="outlined"
                 sx={{ backgroundColor: "#ffffff", borderRadius: 2 }}
               />
+            </Grid>
+            <Grid item xs={12}>
+              <input type="file" onChange={handleFileChange} />
+              <Button onClick={handleFileUpload} variant="contained" sx={{ mt: 2 }}>
+                Upload Photo
+              </Button>
             </Grid>
             <Grid item xs={12} sx={{ display: "flex", justifyContent: "flex-end" }}>
               <Button type="submit" variant="contained" sx={{ background: "#3b82f6", color: "#ffffff" }}>
