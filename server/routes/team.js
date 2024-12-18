@@ -7,13 +7,15 @@ const {
   updateTeamMemberLeads,
   deleteTeamMember,
   Role,
-  getTeamMemberById,getreports,updateTeamMember
+  getTeamMemberById,getreports,updateTeamMember,
+  getsales
 } = require('../controllers/teammemberController');
 
 // Get all team members
 router.get('/', getAllTeamMembers);
 router.get('/get-team-member/:id', getTeamMemberById);
 router.get('/lead-stats',getreports)
+router.get('/sales-stats',getsales)
 
 router.get('/role/:role',Role);
 

@@ -21,7 +21,7 @@ const UpdateLead = () => {
     status: "",
     assignedTo: "",
     leadStage: "",
-    priority:"",
+    priority: "",
     notes: "",
   });
 
@@ -65,6 +65,33 @@ const UpdateLead = () => {
     setLeadData({ ...leadData, [name]: value });
   };
 
+  // Fetch team members when dropdown is opened
+  const handleAssignedToClick = async () => {
+    try {
+      setErrorMessage(""); // Clear any previous error messages
+      console.log("Fetching team members...");
+
+      const response = await fetch(`http://localhost:5000/api/team`);
+      console.log("Response status:", response.status);
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch team members: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log("Fetched team members:", data);
+
+      if (Array.isArray(data) && data.length > 0) {
+        setTeamMembers(data);
+      } else {
+        setErrorMessage("No team members found.");
+      }
+    } catch (error) {
+      console.error("Error fetching team members:", error.message);
+      setErrorMessage("Error fetching team members. Please try again.");
+    }
+  };
+
   // Handle lead update
   const handleUpdateLead = async (e) => {
     e.preventDefault();
@@ -75,7 +102,8 @@ const UpdateLead = () => {
         body: JSON.stringify(leadData),
       });
       alert("Lead updated successfully!");
-      navigate("/leads"); // Navigate to leads list after successful update
+      // Navigate to leads list after successful update and pass state to trigger refresh
+      navigate("/leads", { state: { updated: true } });
     } catch (error) {
       console.error("Error updating lead:", error);
       setErrorMessage("Error updating lead. Please try again.");
@@ -129,22 +157,21 @@ const UpdateLead = () => {
             <MenuItem value="Rejected">Rejected</MenuItem>
           </Select>
         </FormControl>
-       
-        <FormControl fullWidth sx={{ mb: 2 }}>
-  <InputLabel>Priority</InputLabel>
-  <Select
-    name="priority"
-    value={leadData.priority}
-    onChange={handleInputChange}
-    label="Priority"
-    required
-  >
-    <MenuItem value="High">High</MenuItem>
-    <MenuItem value="Medium">Medium</MenuItem>
-    <MenuItem value="Low">Low</MenuItem>
-  </Select>
-</FormControl>
 
+        <FormControl fullWidth sx={{ mb: 2 }}>
+          <InputLabel>Priority</InputLabel>
+          <Select
+            name="priority"
+            value={leadData.priority}
+            onChange={handleInputChange}
+            label="Priority"
+            required
+          >
+            <MenuItem value="High">High</MenuItem>
+            <MenuItem value="Medium">Medium</MenuItem>
+            <MenuItem value="Low">Low</MenuItem>
+          </Select>
+        </FormControl>
 
         <FormControl fullWidth sx={{ mb: 2 }}>
           <InputLabel>Assigned To</InputLabel>
@@ -152,17 +179,21 @@ const UpdateLead = () => {
             name="assignedTo"
             value={leadData.assignedTo}
             onChange={handleInputChange}
+            onOpen={handleAssignedToClick} // Fetch team members when dropdown opens
             label="Assigned To"
             required
           >
+            {/* Map Team Members into Menu Items */}
             {teamMembers.length > 0 ? (
               teamMembers.map((member) => (
-                <MenuItem key={member.id} value={member.id}>
-                  {member.name}
+                <MenuItem key={member._id} value={member._id}>
+                  {member.fullName || member.name} {/* Use fullName or name */}
                 </MenuItem>
               ))
             ) : (
-              <MenuItem value="" disabled>No team members available</MenuItem>
+              <MenuItem value="" disabled>
+                No team members available
+              </MenuItem>
             )}
           </Select>
         </FormControl>
@@ -210,7 +241,7 @@ const UpdateLead = () => {
             variant="outlined"
             color="secondary"
             onClick={() =>
-              setLeadData({ status: "", assignedTo: "", leadStage: "",priority:"", notes: "" })
+              setLeadData({ status: "", assignedTo: "", leadStage: "", priority: "", notes: "" })
             }
           >
             Reset

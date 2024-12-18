@@ -17,8 +17,9 @@ import {
   Select,
   FormControl,
   InputLabel,
+  Fab,
 } from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
+import { Delete, Edit,Add } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 
@@ -177,10 +178,25 @@ useEffect(()=>{
                   </Button>
                 </TableCell>
               </TableRow>
+              
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+      <Fab
+        color="primary"
+        onClick={() => navigate("/add-customer")}
+        sx={{
+          position: "fixed",
+          bottom: 20,
+          right: 20,
+          background: "linear-gradient(90deg, #3b82f6, #1e3a8a)",
+          color: "#ffffff",
+          "&:hover": { background: "linear-gradient(90deg, #1e3a8a, #3b82f6)" },
+        }}
+      >
+        <Add />
+      </Fab>
     </Box>
   );
 };

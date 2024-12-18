@@ -39,7 +39,7 @@ const postphoto= async (req, res) => {
 
 // Create a new lead
 const createLead = async (req, res) => {
-  const { fullName, email, phone, source, description, photo } = req.body;
+  const { fullName, email, phone, source, photo ,estimatedValue,description,followUpDate} = req.body;
 
   try {
     // Find the Sales Representative
@@ -54,7 +54,9 @@ const createLead = async (req, res) => {
       photo, // Include the photo field
       status: "New",
       assignedTo: salesRep._id, // Automatically assign to Sales Representative
-      notes: description,
+      description,
+      followUpDate,
+      estimatedValue
     });
 
     // Save the new lead
@@ -94,10 +96,9 @@ const getRecentLeads = async (req, res) => {
   };
   
 
-
-// Update lead's status and assignment
+ // Update lead's status and assignment
 const updateLead = async (req, res) => {
-  const { status, assignedTo, notes ,leadStage,priority} = req.body;
+  const { status, assignedTo, notes, leadStage, priority } = req.body;
 
   try {
     const lead = await Lead.findById(req.params.id);
@@ -105,19 +106,29 @@ const updateLead = async (req, res) => {
     if (!lead) return res.status(404).json({ error: "Lead not found" });
 
     lead.status = status || lead.status;
-    
     lead.assignedTo = assignedTo || lead.assignedTo;
     lead.leadStage = leadStage || lead.leadStage;
     lead.priority = priority || lead.priority;
-    if (notes) lead.notes.push(notes); // Log notes in history
+
+    // Ensure that notes is an array before pushing
+    if (notes) {
+      if (Array.isArray(notes)) {
+        lead.notes = [...lead.notes, ...notes]; // Add multiple notes if it's an array
+      } else {
+        lead.notes.push(notes); // Add single note
+      }
+    }
 
     await lead.save();
+
+    // Respond with the updated lead
     res.json(lead);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
+  
 // Get all leads
 const getLeads = async (req, res) => {
   try {

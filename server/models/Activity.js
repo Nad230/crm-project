@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const activitySchema = new mongoose.Schema({
   activityType: {
     type: String,
-    enum: ["Call", "Meeting", "Follow-up"], // You can expand this list as needed
+    enum: ["Call", "Meeting", "Video Call"], // You can expand this list as needed
     required: true,
   },
   description: {

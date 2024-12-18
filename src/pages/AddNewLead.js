@@ -108,7 +108,7 @@ const AddNewLead = () => {
       const data = await response.json();
       if (response.ok) {
         setTeam((prevTeam) => [...prevTeam, data]);
-        navigate("/leads");
+        navigate("/");
       } else {
         throw new Error(data.error || "There was an error adding the lead.");
       }

@@ -5,17 +5,18 @@ const leadSchema = new mongoose.Schema({
   email: { type: String, required: true },
   phone: { type: String, default: '' },
   source: { type: String, required: true },
-  companyName: { type: String, default: '' },
   photo: { type: String, default: '' }, // Added photo field
-  status: { type: String, enum: ['New', 'Contacted', 'Qualified', 'Negotiation', 'Closed',"rejected"], default: 'New' },
+  status: { type: String, enum: ['New', 'Contacted', 'Qualified', 'Negotiation', 'Closed', "Rejected"], default: 'New' },
   leadStage: { type: String, enum: ['Initial Contact', 'Follow-up', 'Negotiation'], default: 'Initial Contact' },
   priority: { type: String, enum: ['High', 'Medium', 'Low'], default: 'Low' },
-  assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'TeamMember', required: true },
-  notes: { type: String, default: '' },
+  assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'TeamMember'},
+  notes: { type: [String], default: [] },  // Make sure this is an array of strings
   estimatedValue: { type: Number, default: null },
   description: { type: [String], default: [] }, // Corrected spelling
-  history: { type: mongoose.Schema.Types.ObjectId, ref: 'Activity'},
-  customAttributes: { type: Map, of: String, default: {} }
+  customAttributes: { type: Map, of: String, default: {} },
+  
+  // Add followUpDate field here
+  followUpDate: { type: Date }  // Add follow-up date field
 });
 
 module.exports = mongoose.model('Lead', leadSchema);

@@ -9,7 +9,7 @@ ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarEle
 
 const ReportsPage = () => {
   const [leadStats, setLeadStats] = useState({});
-  const [salesStats, setSalesStats] = useState([]);
+  const [salesStats, setSalesStats] = useState([]);  // Store sales stats data
   const [activities, setActivities] = useState([]);
   const [users, setUsers] = useState({});
   const [leads, setLeads] = useState({});
@@ -23,6 +23,18 @@ const ReportsPage = () => {
       })
       .catch((error) => {
         console.error("Error fetching lead stats:", error);
+      });
+  }, []);
+
+  // Fetch sales stats for the sales growth chart
+  useEffect(() => {
+    axios.get('http://localhost:5000/api/team/sales-stats')
+      .then((response) => {
+        console.log("Sales Stats Response:", response.data);
+        setSalesStats(response.data.values);  // Store sales data (monthly)
+      })
+      .catch((error) => {
+        console.error("Error fetching sales stats:", error);
       });
   }, []);
 
@@ -82,11 +94,11 @@ const ReportsPage = () => {
 
   // Data for the Sales Growth Bar chart
   const salesStatsData = {
-    labels: salesStats.map((stat) => stat.month),
+    labels: ["Jul", "Aug", "Sept", "Oct", "Nov", "Dec"],  // Months (or labels)
     datasets: [
       {
         label: "Sales Growth",
-        data: salesStats.map((stat) => stat.sales),
+        data: salesStats,  // Map sales data to monthly stats
         backgroundColor: "#2196f3",
         borderColor: "#1976d2",
         borderWidth: 1,
@@ -135,7 +147,7 @@ const ReportsPage = () => {
             <Typography variant="h6" sx={{ marginBottom: 2 }}>
               Sales Growth (Monthly)
             </Typography>
-            <Bar data={salesStatsData} />
+            <Bar data={salesStatsData} options={{ responsive: true }} />
           </Card>
         </Grid>
       </Grid>
@@ -151,8 +163,8 @@ const ReportsPage = () => {
           {activities.length > 0 ? (
             activities.map((activity) => (
               <Typography key={activity._id} variant="body1" color="text.secondary">
-                  {`${new Date(activity.date).toLocaleTimeString()} - ${activity.description}`}
-                  </Typography>
+                {`${new Date(activity.date).toLocaleTimeString()} - ${activity.description}`}
+              </Typography>
             ))
           ) : (
             <Typography variant="body1" color="text.secondary">

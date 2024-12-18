@@ -14,7 +14,7 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-import { Edit, Call, Chat, ArrowBack } from "@mui/icons-material";
+import { Edit, Chat, ArrowBack, AddCircle } from "@mui/icons-material";
 import { motion } from "framer-motion";
 
 const LeadDetailsPage = () => {
@@ -124,12 +124,12 @@ const LeadDetailsPage = () => {
         </IconButton>
 
         <CardMedia
-  component="img"
-  height="200"
-  image={`http://localhost:5000/uploads/${lead.photo.split("/").pop()}`} // Ensures only the filename is used
-  alt="Lead Photo"
-  sx={{ borderRadius: 2, marginBottom: 3 }}
-/>
+          component="img"
+          height="200"
+          image={`http://localhost:5000/uploads/${lead.photo.split("/").pop()}`} // Ensures only the filename is used
+          alt="Lead Photo"
+          sx={{ borderRadius: 2, marginBottom: 3 }}
+        />
 
         <Typography
           variant="h4"
@@ -157,9 +157,7 @@ const LeadDetailsPage = () => {
             <Typography variant="body1" sx={{ marginBottom: 1 }}>
               <strong>Source:</strong> {lead.source}
             </Typography>
-            <Typography variant="body1" sx={{ marginBottom: 1 }}>
-              <strong>Company Name:</strong> {lead.companyName || "N/A"}
-            </Typography>
+
             <Typography
               variant="body1"
               sx={{
@@ -190,16 +188,16 @@ const LeadDetailsPage = () => {
 
             {/* Display History */}
             <Typography variant="body1" sx={{ marginBottom: 1 }}>
-              <strong>History:</strong> 
-              {lead.history === "yes" 
-                ? "Worked with us before" 
+              <strong>History:</strong>
+              {lead.history === "yes"
+                ? "Worked with us before"
                 : "Has not worked with us before"}
             </Typography>
 
             {/* Display Notes */}
             <Typography variant="body1" sx={{ marginBottom: 1 }}>
-  <strong>Notes:</strong> {Array.isArray(lead.notes) && lead.notes.length > 0 ? lead.notes.join(", ") : "No notes available."}
-</Typography>
+              <strong>Notes:</strong> {Array.isArray(lead.notes) && lead.notes.length > 0 ? lead.notes.join(", ") : "No notes available."}
+            </Typography>
 
             <Typography variant="body1" sx={{ marginBottom: 1 }}>
               <strong>Custom Attributes:</strong> {Object.keys(lead.customAttributes || {}).length > 0 ? Object.entries(lead.customAttributes).map(([key, value]) => `${key}: ${value}`).join(", ") : "No custom attributes."}
@@ -209,15 +207,15 @@ const LeadDetailsPage = () => {
 
         <Box sx={{ display: "flex", gap: 2, marginTop: 3, justifyContent: "center" }}>
           <Button
-                             variant="outlined"
-                             color="primary"
-                             size="small"
-                             sx={{ marginRight: 1 }}
-                             startIcon={<Edit />}
-                             onClick={() => navigate(`/updateLead/${lead._id}`)} // Navigate to UpdateCustomer
-                           >
-                             Edit
-                           </Button>
+            variant="outlined"
+            color="primary"
+            size="small"
+            sx={{ marginRight: 1 }}
+            startIcon={<Edit />}
+            onClick={() => navigate(`/updateLead/${lead._id}`)} // Navigate to UpdateCustomer
+          >
+            Edit
+          </Button>
           <Button
             variant="outlined"
             startIcon={<Chat />}
@@ -228,9 +226,9 @@ const LeadDetailsPage = () => {
           </Button>
           <IconButton
             sx={{ color: "#10b981" }}
-            onClick={() => window.open(`tel:${lead.phone}`, "_self")}
+            onClick={() => navigate(`/add-activity`)} // Navigate to Add Activity page
           >
-            <Call sx={{ fontSize: 30 }} />
+            <AddCircle sx={{ fontSize: 30 }} />
           </IconButton>
         </Box>
       </Box>

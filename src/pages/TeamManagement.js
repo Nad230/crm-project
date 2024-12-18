@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Box, TextField, Button, Typography, Paper, IconButton, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import { Person, Email, Phone, Work } from '@mui/icons-material';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const AddTeamMember = () => {
+  const navigate = useNavigate(); // Initialize useNavigate
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -39,6 +41,11 @@ const AddTeamMember = () => {
         role: '',
         password: '', // Reset password field
       });
+
+      // Navigate to Team Management page
+      setTimeout(() => {
+        navigate('/teammember', { state: { message: 'Team member added successfully!' } });
+      }, 1000); // Delay to show success message before navigation
     } catch (error) {
       console.error('Error adding team member:', error.response ? error.response.data : error.message);
       setErrorMessage('Error adding team member, please try again.');

@@ -9,8 +9,10 @@ import {
 } from "@mui/material";
 import { Person, Email, Phone, Business, Note } from "@mui/icons-material";
 import axios from "axios"; // Import axios
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const AddCustomer = () => {
+  const navigate = useNavigate(); // Initialize useNavigate
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -30,9 +32,13 @@ const AddCustomer = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:5000/api/customer/addCustomer", formData);
+      const response = await axios.post(
+        "http://localhost:5000/api/customer/addCustomer",
+        formData
+      );
       console.log("Customer added successfully:", response.data);
       alert("Customer added successfully!");
+
       setFormData({
         name: "",
         email: "",
@@ -41,8 +47,13 @@ const AddCustomer = () => {
         company: "",
         notes: "",
       }); // Reset form
+
+      navigate("/customer"); // Redirect to "/customers" page
     } catch (error) {
-      console.error("Error adding customer:", error.response ? error.response.data : error.message);
+      console.error(
+        "Error adding customer:",
+        error.response ? error.response.data : error.message
+      );
       setErrorMessage("Error adding customer, please try again."); // Set error message
     }
   };
@@ -73,7 +84,8 @@ const AddCustomer = () => {
       <Typography variant="h5" component="h2" gutterBottom>
         Add New Customer
       </Typography>
-      {errorMessage && <Typography color="error">{errorMessage}</Typography>} {/* Show error message */}
+      {errorMessage && <Typography color="error">{errorMessage}</Typography>}{" "}
+      {/* Show error message */}
       <form onSubmit={handleSubmit}>
         <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
           <IconButton disabled>
@@ -153,11 +165,7 @@ const AddCustomer = () => {
           >
             Submit
           </Button>
-          <Button
-            variant="outlined"
-            color="secondary"
-            onClick={handleReset}
-          >
+          <Button variant="outlined" color="secondary" onClick={handleReset}>
             Reset
           </Button>
         </Box>

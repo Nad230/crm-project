@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'; 
 import axios from 'axios';
 import { Box, Grid, Typography, Card, CardContent, IconButton } from '@mui/material';
 import { BarChart, People, AccountBalance } from '@mui/icons-material';
 import { Line } from 'react-chartjs-2';
 
-// Import necessary elements from Chart.js
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -16,7 +15,6 @@ import {
   Legend,
 } from 'chart.js';
 
-// Register the elements
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -34,12 +32,18 @@ const Dashboard = () => {
     revenue: 0,
     leadsGrowth: [],
   });
+  const [monthlyRevenue, setMonthlyRevenue] = useState(0); // Add state for monthly revenue
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/dashboard');
-        setDashboardData(response.data);
+        // Fetch dashboard data
+        const dashboardResponse = await axios.get('http://localhost:5000/api/dashboard');
+        setDashboardData(dashboardResponse.data);
+
+        // Fetch revenue for the current month
+        const salesStatsResponse = await axios.get('http://localhost:5000/api/team/sales-stats');
+        setMonthlyRevenue(salesStatsResponse.data.monthlyRevenue);
       } catch (error) {
         console.error('Error fetching dashboard data', error);
       }
@@ -102,7 +106,7 @@ const Dashboard = () => {
             <CardContent>
               <Typography variant="h6">Revenue This Month</Typography>
               <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                ${dashboardData.revenue}
+                ${monthlyRevenue}
               </Typography>
             </CardContent>
             <IconButton sx={{ color: '#38bdf8' }}>
